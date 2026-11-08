@@ -730,12 +730,16 @@ def handle_message(msg):
     arg = parts[1] if len(parts) > 1 else ""
     chat = msg["chat"]["id"]
     if cmd == "/start":
-        if arg.startswith("ver_"):
-            return cmd_verify(msg, arg[4:])
+        # admin binding comes first, so the admin is recognised even if the first /start is a verify link
         if admin_id() is None and (u.get("username") or "").lower() == ADMIN_USERNAME.lower():
             cfg_set("admin_id", u["id"])
             log("Admin bound: id", u["id"])
-            return send(chat, "✅ Admin verified. Numeric ID saved: <code>%s</code>\n\n%s" % (u["id"], HELP))
+            send(chat, "✅ Admin verified. Numeric ID saved: <code>%s</code>\n\n%s" % (u["id"], HELP))
+            if arg.startswith("ver_"):
+                cmd_verify(msg, arg[4:])
+            return
+        if arg.startswith("ver_"):
+            return cmd_verify(msg, arg[4:])
         if is_admin(u["id"]):
             return send(chat, "Welcome back, admin.\n\n" + HELP)
         return send(chat, "Hello! To get a license, open the OMOR EARNING extension, connect, and use the "
