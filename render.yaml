@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: omor-earning-license-api
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: python bot.py
+    healthCheckPath: /health
+    disk:
+      name: license-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_BOT_USERNAME
+        sync: false
+      - key: ADMIN_TELEGRAM_USERNAME
+        value: Omor_Faruk789
+      - key: LICENSE_DB
+        value: /var/data/licenses.sqlite3
+      - key: PORT
+        value: 8000
